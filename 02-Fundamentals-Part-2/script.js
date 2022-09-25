@@ -12,7 +12,7 @@ const age = function (birthYear) {
   return 2022 - birthYear;
 };
 
-//Arrow Functions
+//Arrow Functions -- no this keyword
 const calcAge = (birthYear) => 2022 - birthYear;
 
 const calculateRetirement = (birthYear, firstName) => {
@@ -27,3 +27,5 @@ console.log(
   calcAge(1999),
   calculateRetirement(1999, "John")
 );
+
+//timelapse 1.15.00 vid 2
