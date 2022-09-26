@@ -93,3 +93,68 @@ if (friends.includes("Lisa")) {
 } else {
   console.log("Lisa not found in friend list");
 }
+
+//---------------------------CODING CHALLENGE 2---------------------------//
+/*
+Steven is still building his tip calculator, using the same rules as before: Tip 15% of 
+the bill if the bill value is between 50 and 300, and if the value is different, the tip is 
+20%.
+Your tasks:
+1. Write a function 'calcTip' that takes any bill value as an input and returns 
+the corresponding tip, calculated based on the rules above (you can check out 
+the code from first tip calculator challenge if you need to). Use the function 
+type you like the most. Test the function using a bill value of 100
+2. And now let's use arrays! So create an array 'bills' containing the test data 
+below
+3. Create an array 'tips' containing the tip value for each bill, calculated from 
+the function you created before
+4. Bonus: Create an array 'total' containing the total values, so the bill + tip
+Test data: 125, 555 and 44
+*/
+
+const calcTip = (bill) => {
+  return bill >= 50 && bill <= 300 ? 0.15 * bill : 0.2 * bill;
+};
+const calcGrandTotal = (bill, tip) => bill + tip;
+console.log("Tip for a bill of 100: ", calcTip(100));
+const bills = [125, 555, 44];
+const tips = new Array();
+const total = new Array();
+
+tips.push(calcTip(bills[0]));
+tips.push(calcTip(bills[1]));
+tips.push(calcTip(bills[2]));
+
+console.log(bills);
+console.log(tips);
+
+total.push(calcGrandTotal(bills[0], tips[0]));
+total.push(calcGrandTotal(bills[1], tips[1]));
+total.push(calcGrandTotal(bills[2], tips[2]));
+console.log(total);
+
+//----------------------------OBJECTS-------------------------------
+//key-value pairs
+const john = {
+  firstName: "John",
+  lastName: "Doe",
+  age: 23,
+  friends: ["Michael", "Lisa", "Jimmy"],
+};
+
+// Two notations to access object attributes , dot and bracket notation
+console.log(john.firstName);
+console.log(john["lastName"]); //we can put any expression here which will be evaluated then.
+//Example when to use bracket notation
+// const interestedIn = prompt(
+//   "Choose what would you want to know about John. Select one from job,age,friends,last name"
+// );
+// console.log(john.interestedIn);
+// console.log(john[interestedIn]);
+
+//Adding new attributes to objects
+john["location"] = "USA";
+john.twitter = "@johnDoe";
+// console.log(john);
+
+//-------------------CHALLENGE--------------------------------------
