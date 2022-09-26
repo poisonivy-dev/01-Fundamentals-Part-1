@@ -138,7 +138,7 @@ console.log(total);
 const john = {
   firstName: "John",
   lastName: "Doe",
-  age: 23,
+  birthYear: 1999,
   friends: ["Michael", "Lisa", "Jimmy"],
 };
 
@@ -147,7 +147,7 @@ console.log(john.firstName);
 console.log(john["lastName"]); //we can put any expression here which will be evaluated then.
 //Example when to use bracket notation
 // const interestedIn = prompt(
-//   "Choose what would you want to know about John. Select one from job,age,friends,last name"
+//   "Choose what would you want to know about John. Select one from job,birthYear,friends,lastName"
 // );
 // console.log(john.interestedIn);
 // console.log(john[interestedIn]);
@@ -157,4 +157,102 @@ john["location"] = "USA";
 john.twitter = "@johnDoe";
 // console.log(john);
 
-//-------------------CHALLENGE--------------------------------------
+//-------------------MINI CHALLENGE--------------------------------------
+console.log(
+  `${john.firstName} has ${john.friends.length} friends and his best-friend is ${john.friends[0]}`
+);
+
+//----------------USING FUNCTION INSIDE OBJECT AND USE OF THIS KEYWORD------------
+
+// value as expression of a function
+john.calcAge = function () {
+  this.age = 2022 - this.birthYear;
+  return this.age;
+};
+console.log(john);
+//can calculate age once
+console.log(john.calcAge());
+//use the value of age for next times
+console.log(john.age);
+console.log(john.age);
+
+// ------ Mini Challenge -------
+//write summary from the object
+john.hasDriversLicense = false;
+john.job = "engineer";
+john.calcSummary = function () {
+  return `${this.firstName} is a ${this.calcAge()} years old ${
+    this.job
+  } and he has ${this.hasDriversLicense ? "a" : "no"} drivers license`;
+};
+console.log(john.calcSummary());
+
+//--------------------------CODING CHALLENGE 3---------------------------//
+/*
+Let's go back to Mark and John comparing their BMIs! This time, let's use objects to 
+implement the calculations! Remember: BMI = mass / height ** 2 = mass 
+/ (height * height) (mass in kg and height in meter)
+Your tasks:
+1. For each of them, create an object with properties for their full name, mass, and 
+height (Mark Miller and John Smith)
+2. Create a 'calcBMI' method on each object to calculate the BMI (the same 
+method on both objects). Store the BMI value to a property, and also return it 
+from the method
+3. Log to the console who has the higher BMI, together with the full name and the 
+respective BMI. Example: "John's BMI (28.3) is higher than Mark's (23.9)!"
+Test data: Marks weights 78 kg and is 1.69 m tall. John weights 92 kg and is 1.95 m 
+tall
+*/
+
+const mark = {
+  firstName: "Mark",
+  lastName: "Miller",
+  mass: 78,
+  height: 1.69,
+  calcBMI: function () {
+    this.BMI = this.mass / this.height ** 2;
+    return this.BMI;
+  },
+};
+
+const John = {
+  firstName: "John",
+  lastName: "Smith",
+  mass: 92,
+  height: 1.95,
+  calcBMI: function () {
+    this.BMI = this.mass / this.height ** 2;
+    return this.BMI;
+  },
+};
+
+const highestBMIHolder = mark.calcBMI() > John.calcBMI() ? "Mark" : "John";
+
+console.log(
+  `${highestBMIHolder}'s BMI (${
+    highestBMIHolder == "Mark" ? mark.BMI : John.BMI
+  }) is greater than ${highestBMIHolder != "Mark" ? "Mark" : "John"}'s BMI (${
+    highestBMIHolder != "Mark" ? mark.BMI : John.BMI
+  })`
+);
+
+//-----------------------FOR LOOPS ------------------------------------//
+//iteration of john
+const johnDoe = ["John", "Doe", 2022, 18, ["Michael", "23", "male"]];
+const types = new Array();
+console.log(johnDoe.length);
+for (let i = 0; i < johnDoe.length; i++) {
+  console.log(johnDoe[i]);
+  types[i] = typeof johnDoe[i];
+}
+console.log(types);
+
+//-------------CONTINUE AND BREAK STATEMENTS---------------------//
+//CONTINUE lets you skip the current iteration while break exits from the whole loop
+
+for (let i = 0; i < johnDoe.length; i++) {
+  if (typeof johnDoe[i] === "number") continue;
+  if (typeof johnDoe[i] === "object") break;
+  console.log(johnDoe[i]);
+}
+//timelapse 3.54.46
