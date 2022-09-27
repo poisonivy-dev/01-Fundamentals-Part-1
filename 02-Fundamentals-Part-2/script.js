@@ -255,4 +255,63 @@ for (let i = 0; i < johnDoe.length; i++) {
   if (typeof johnDoe[i] === "object") break;
   console.log(johnDoe[i]);
 }
-//timelapse 3.54.46
+
+//------------------WHILE LOOP--------------------------------//
+/*
+Consider using while loop when you do not know how many times you have to run the loop.-> do not know the counter loop value
+Example:
+*/
+let dice = Math.trunc(Math.random() * 6 + 1);
+console.log(dice);
+while (dice !== 6) {
+  console.log(`You rolled a ${dice}`);
+  dice = Math.trunc(Math.random() * 6 + 1);
+}
+
+//-----------------------CODING CHALLENGE 4---------------------------------------//
+/*
+Let's improve Steven's tip calculator even more, this time using loops!
+Your tasks:
+1. Create an array 'bills' containing all 10 test bill values
+2. Create empty arrays for the tips and the totals ('tips' and 'totals')
+3. Use the 'calcTip' function we wrote before (no need to repeat) to calculate 
+tips and total values (bill + tip) for every bill value in the bills array. Use a for
+loop to perform the 10 calculations!
+Test data: 22, 295, 176, 440, 37, 105, 10, 1100, 86 and 52
+
+Bonus:
+4. Bonus: Write a function 'calcAverage' which takes an array called 'arr' as 
+an argument. This function calculates the average of all numbers in the given 
+array. This is a difficult challenge (we haven't done this before)! Here is how to 
+solve it:
+4.1. First, you will need to add up all values in the array. To do the addition, 
+start by creating a variable 'sum' that starts at 0. Then loop over the 
+array using a for loop. In each iteration, add the current value to the 
+'sum' variable. This way, by the end of the loop, you have all values 
+added together
+4.2. To calculate the average, divide the sum you calculated before by the 
+length of the array (because that's the number of elements)
+4.3. Call the function with the 'totals' array
+*/
+const bill = [22, 295, 176, 440, 37, 105, 10, 1100, 86, 52];
+const tip = new Array();
+const totals = new Array();
+
+for (let i = 0; i < bill.length; i++) {
+  tip[i] = calcTip(bill[i]);
+  totals[i] = calcGrandTotal(bill[i], tip[i]);
+}
+console.log(tip);
+console.log(totals);
+
+//Bonus
+const calcArrAverage = function (arr) {
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    sum += arr[i];
+  }
+  const average = sum / arr.length;
+  return average;
+};
+
+console.log(calcArrAverage(totals));
