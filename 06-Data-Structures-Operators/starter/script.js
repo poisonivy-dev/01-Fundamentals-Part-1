@@ -46,6 +46,26 @@ restaurant.orderDelivery({
   mainIndex: 2,
   starterIndex: 3,
 });
+//-------------9- How to loop over objects------------------//
+//we can loop over iterables -- but how to loop over objects which are not
+//using the Object.key function
+const totalDays = Object.keys(restaurant.openingHours);
+let str = `we are open in ${totalDays.length} days: `;
+
+for (const day of totalDays) {
+  str += `${day},`;
+}
+console.log(str);
+
+// Using object.values function to get the original values
+const valuesOfOpeningHours = Object.values(restaurant.openingHours);
+console.log(valuesOfOpeningHours);
+
+//now if we want to use both we will use the Object.entries function
+for (const [i, { open, close }] of Object.entries(restaurant.openingHours)) {
+  console.log(`On ${i} we open at ${open} and close at ${close}`);
+}
+
 //-------------8- The New Object Literal syntax-------------//
 
 //1-----we can  now directly put a new object inside an object without using key-value pair assignment
