@@ -466,3 +466,60 @@ game.printGoal(...game.scored);
 
 team1 < team2 && console.log("Team 1 is most likely to win");
 team2 < team1 && console.log("team 2 is most likely to win");
+
+//------------------------------------CODING CHALLENGE 2--------------------------------------
+/*
+Let's continue with our football betting app! Keep using the 'game' variable from 
+before.
+Your tasks:
+1. Loop over the game.scored array and print each player name to the console, 
+along with the goal number (Example: "Goal 1: Lewandowski")
+2. Use a loop to calculate the average odd and log it to the console (We already 
+studied how to calculate averages, you can go check if you don't remember)
+3. Print the 3 odds to the console, but in a nice formatted way, exactly like this:
+Odd of victory Bayern Munich: 1.33
+Odd of draw: 3.25
+Odd of victory Borrussia Dortmund: 6.5
+Get the team names directly from the game object, don't hardcode them 
+(except for "draw"). Hint: Note how the odds and the game objects have the 
+same property names �
+4. Bonus: Create an object called 'scorers' which contains the names of the 
+players who scored as properties, and the number of goals as the value. In this 
+game, it will look like this:
+{
+ Gnarby: 1,
+ Hummels: 1,
+ Lewandowski: 2
+}
+*/
+
+//1. lOOPING OVER THE PLAYER NAME
+for (const [i, player] of Object.entries(game.scored)) {
+  console.log(`Goal ${Number(i) + 1}: ${player}`);
+}
+
+//2. Calculating the average odd
+const oddArr = Object.values(game.odds);
+let sum = 0;
+for (const odd of oddArr) {
+  sum += odd;
+}
+console.log(`Average = ${sum / oddArr.length}`);
+
+//3.
+for (const [i, odd] of Object.entries(game.odds)) {
+  console.log(`Odd of ${game[i] || "draw"} : ${odd}`);
+}
+
+//4---creating object
+
+const scorers = {
+  [game.scored[0]]: 1,
+  [game.scored[1]]: 1,
+  [game.scored[2]]: 1,
+  [game.scored[3]]: 3,
+};
+console.log(game.scored);
+console.log(scorers);
+
+//Time lapse 3:02:13
