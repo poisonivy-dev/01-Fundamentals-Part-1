@@ -46,6 +46,123 @@ restaurant.orderDelivery({
   mainIndex: 2,
   starterIndex: 3,
 });
+//------------10- SETS---------------------------------------//
+// New data structure that has no indexes and has unique values
+//they are iterables
+
+//Example:
+//new set -declaration
+let orderedSet = new Set([
+  "Pizza",
+  "Pizza",
+  "Pizza",
+  "Pasta",
+  "Rissotto",
+  "Pasta",
+]);
+//Set has a size attribute similar to length of array
+console.log(orderedSet.size, orderedSet);
+// order does not matter in sets
+//add value to set -- Similar to push
+orderedSet.add("Noodles");
+console.log(orderedSet);
+//we can remove elements
+orderedSet.delete("Pizza");
+console.log(orderedSet);
+//we can empty a set using clear() function
+//we can check if the value exists or not using has() method, this is similar to includes() in arrays
+console.log(orderedSet.has("Noodles"));
+
+// Real World Example
+// what if we want to extract unique elements from an array and then take values in an array
+//Array
+let positions = ["chef", "manager", "waiter", "chef", "waiter", "receptionist"];
+//step 1 find unique elements -- convert to set
+const newPositions = new Set(positions);
+//Step 2 : unpack it and assign it to the previous array
+positions = [...newPositions];
+console.log(positions);
+//Doing it in one step
+// const position = [
+//   ...new Set(["chef", "manager", "waiter", "chef", "waiter", "receptionist"]),
+// ];
+// console.log(position);
+
+//if we only want to know the size of unique elements we can do this
+console.log(
+  new Set(["chef", "manager", "waiter", "chef", "waiter", "receptionist"]).size
+);
+console.log(new Set("johndoe").size);
+
+//--------------------11- MAPS---------------------------------//
+//maps can have any datatype as keys including boolean and arrays
+//example
+const rest = new Map();
+//adding values to map
+rest.set("name", "classical Italiano");
+rest.set(1, "Firenze, Italy");
+rest.set(2, "Portugal");
+
+//we can add it together as
+rest
+  .set("categories", ["Italian", "Organic", "vegetarian"])
+  .set("open", 11)
+  .set("close", 23)
+  .set(true, "We are opened")
+  .set(false, "We are closed");
+console.log(rest);
+
+//Retrieving elements
+const time = 21;
+//it will return true and false and fetch those keys based on time
+console.log(rest.get(time > rest.get("open") && time < rest.get("close")));
+
+//Other methods
+// rest.delete('categories');
+// rest.clear();
+// rest.has('categories');
+// console.log(rest.size);
+
+//using array as map keys
+const mapKey = [1, 2];
+console.log(rest.set(mapKey, "test"));
+console.log(rest.get(mapKey));
+
+// setting a query as key
+const query = document.querySelector("h1");
+console.log(query);
+console.log(rest.set(query, "Heading"));
+
+//----------------Maps Iteration -------------------------//
+const question = new Map([
+  ["q", "What is the best programming language"],
+  [1, "C++"],
+  [2, "Java"],
+  [3, "Javascript"],
+  ["correct", "Javascript"],
+  [true, "🎉Correct!"],
+  [false, "False"],
+]);
+
+//The structure is similar to object thus we can easily convert object to map if we already have an object
+const openingHoursMap = new Map(Object.entries(restaurant.openingHours));
+console.log("new map", openingHoursMap);
+
+// Iterating the map
+console.log(question.get("q"));
+//destructure directly from map because it is iterable
+for (const [key, val] of question) {
+  if (typeof key === "number") console.log(`Answer ${key}: ${val}`);
+}
+// const ans = Number(prompt("What is your answer?"));
+const ans = 3;
+console.log(question.get(question.get(ans) === question.get("correct")));
+
+//Sometimes, we need to convert Map back to an array
+console.log("values to array: ", [...question]);
+
+//--------------12-Which Data Structure Should I use?---------//
+
 //-------------9- How to loop over objects------------------//
 //we can loop over iterables -- but how to loop over objects which are not
 //using the Object.key function
@@ -513,13 +630,64 @@ for (const [i, odd] of Object.entries(game.odds)) {
 
 //4---creating object
 
-const scorers = {
-  [game.scored[0]]: 1,
-  [game.scored[1]]: 1,
-  [game.scored[2]]: 1,
-  [game.scored[3]]: 3,
-};
-console.log(game.scored);
+const scorers = {};
+//for each player who scored
+for (const player of game.scored) {
+  //if the key is present then increment its value else assign one goal point to it
+  scorers[player] ? scorers[player]++ : (scorers[player] = 1);
+}
+
 console.log(scorers);
 
-//Time lapse 3:02:13
+//------------------------------------CODING CHALLENGE 3----------------------------------//
+/*
+Let's continue with our football betting app! This time, we have a map called 
+'gameEvents' (see below) with a log of the events that happened during the 
+game. The values are the events themselves, and the keys are the minutes in which 
+each event happened (a football game has 90 minutes plus some extra time).
+Your tasks:
+1. Create an array 'events' of the different game events that happened (no 
+duplicates)
+2. After the game has finished, is was found that the yellow card from minute 64 
+was unfair. So remove this event from the game events log.
+3. Compute and log the following string to the console: "An event happened, on 
+average, every 9 minutes" (keep in mind that a game has 90 minutes)
+4. Loop over 'gameEvents' and log each element to the console, marking 
+whether it's in the first half or second half (after 45 min) of the game, like this:
+[FIRST HALF] 17: ⚽ GOAL
+*/
+const gameEvents = new Map([
+  [17, "⚽ GOAL"],
+  [36, "� Substitution"],
+  [47, "⚽ GOAL"],
+  [61, "� Substitution"],
+  [64, "� Yellow card"],
+  [69, "� Red card"],
+  [70, "� Substitution"],
+  [72, "� Substitution"],
+  [76, "⚽ GOAL"],
+  [80, "⚽ GOAL"],
+  [92, "� Yellow card"],
+]);
+
+//1-CREATING AN ARRAY OF EVENTS HAPPENED
+const events = [...new Set(gameEvents.values())];
+console.log(events);
+
+//2-remove minutes 64 from gameEvents
+gameEvents.delete(64);
+console.log(gameEvents);
+
+//3- Calculate after how many minutes an event occured on average
+
+console.log(`An event happened, on 
+average, every ${90 / gameEvents.size} minutes`);
+
+//4-iterating the map
+for (const [time, event] of gameEvents) {
+  console.log(
+    time <= 45
+      ? `[FIRST HALF] ${time}: ${event}`
+      : `[SECOND HALF] ${time}: ${event}`
+  );
+}
