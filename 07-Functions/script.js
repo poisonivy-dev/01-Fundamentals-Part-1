@@ -284,3 +284,103 @@ const displayOutsideResult = poll.displayResults;
 displayOutsideResult.call({ answers: [5, 2, 3] }, "string");
 //using array display
 displayOutsideResult.call({ answers: [1, 5, 3, 9, 6, 1] });
+
+//-----Immediately Invoked Function Expression
+//Function that can be executed only once
+//Example:
+
+(function () {
+  console.log(`This is IIFE function`);
+})();
+
+//Why invent this?
+//many programmers came up with this pattern solution when only var was used. It ensures data encapsulation and data privacy. Thus, the data can't be accessed from external sources or libraries.
+
+//---------CLOSURES
+//A concept that puts together execution contexts, call stack and scope chain..
+//We don't create closure explicitly. It happens automatically in certain situations
+
+//A CLOSURE IS THE CLOSED-OVER VARIABLE ENVIRONMENT OF THE EXECUTION CONTEXT IN WHICH A FUNCTION WAS CREATED, EVEN AFTER THAT EXECUTION CONTEXT IS GONE.
+
+//EXAMPLE
+
+let passengers = 20;
+
+const securePassengers = function () {
+  let passengers = 0;
+  return function () {
+    passengers++;
+    console.log(passengers);
+  };
+};
+
+const bookSeat = securePassengers();
+bookSeat(); //1 passenger
+bookSeat(); //2
+bookSeat(); //3
+
+//Closure has access to the variable environment of its parent function even after it is popped out of its call stack
+//It will look at the variables even before looking at the scope chain because it has higher priority
+
+//More Closure Examples
+//Example 1 -- While reassigning variables
+let f;
+const g = function () {
+  let a = Math.random() * 5;
+  console.log(a);
+  f = function () {
+    console.log(Math.trunc(a));
+  };
+};
+const h = function () {
+  let d = 772 * 2;
+  console.log(d);
+  f = function () {
+    console.log(d);
+  };
+};
+g();
+//since declared outside, we can access it here
+//It can also access the environment variables of g.
+f();
+//f will be reassigned here
+h();
+//f function would have been overwritten
+f();
+
+//Example 2 -- While using Timer functions
+const boardMembers = function (n, wait) {
+  const perGroup = n / 3;
+
+  //timer function -- callback function
+  //it will execute 1sec
+  //boardMembers might have finished its executed by that time.
+  setTimeout(function () {
+    console.log(`We are now boarding all ${n} passengers`);
+    console.log(`There are 3 groups, each with ${perGroup} members`);
+  }, wait * 1000);
+  console.log(`will start boarding after ${wait} seconds`);
+};
+
+//setTimeout will have access to the environment variables of boardMembers() through closure
+// boardMembers(180, 3);
+
+//--------------------------CODING CHALLENGE 2-----//
+/*
+This is more of a thinking challenge than a coding challenge..
+Your tasks:
+1. Take the IIFE below and at the end of the function, attach an event listener that 
+changes the color of the selected h1 element ('header') to blue, each time 
+the body element is clicked. Do not select the h1 element again!
+2. And now explain to yourself (or someone around you) why this worked! Take all 
+the time you need. Think about when exactly the callback function is executed, 
+and what that means for the variables involved in this example.
+*/
+
+(function () {
+  const header = document.querySelector("h1");
+  header.style.color = "red";
+  document.body.addEventListener("click", function () {
+    header.style.color = "blue";
+  });
+})();
