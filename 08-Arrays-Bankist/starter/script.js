@@ -94,10 +94,36 @@ const calcDisplayBalance = function (movements) {
   const balance = movements.reduce((sum, currVal) => sum + currVal, 0);
   labelBalance.textContent = `${balance} EUR`;
 };
+
+//calculate the summary of account
+const calcSummary = function (movements) {
+  //INCOME
+  const income = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = income + '€';
+  //OUTGOING
+  const out = movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = Math.abs(out) + '€';
+
+  const interest = movements
+    .filter(mov => mov > 0)
+    .map(mov => {
+      const int = (mov * 1.2) / 100;
+      console.log(int, 'interest');
+      if (int >= 1) return int;
+      else return 0;
+    })
+    .reduce((acc, mov) => mov + acc, 0);
+  labelSumInterest.textContent = interest + '€';
+};
 //calling functions
 displayMovements(account1.movements);
 createUsername(accounts);
 calcDisplayBalance(account1.movements);
+calcSummary(account1.movements);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -305,3 +331,63 @@ Test data:
 § Data 2: [16, 6, 10, 5, 6, 1, 4]
 GOOD LUCK 
 */
+const calculateAverageHumanAge = function (ages) {
+  console.log(ages);
+  //calculating the human age of dog
+  const humanAge = ages.map(function (age) {
+    if (age <= 2) return 2 * age;
+    else return 16 + age * 4;
+  });
+  //excluding the minor adult dogs in human age
+  const adultDogs = humanAge.filter(function (age) {
+    return age >= 18;
+  });
+  console.log(adultDogs);
+  //calculating the average age of adult dogs
+  const averageAdultAge =
+    adultDogs.reduce(function (sum, age) {
+      return sum + age;
+    }, 0) / adultDogs.length;
+  console.log(averageAdultAge);
+};
+
+calculateAverageHumanAge([5, 2, 4, 1, 15, 8, 3]);
+calculateAverageHumanAge([16, 6, 10, 5, 6, 1, 4]);
+
+//-------------CHAINING THE ARRAY METHODS --------------//
+// we can also chain array methods just like strings
+const totalDepositsUSD = movements
+  .filter(mov => mov > 0)
+  .map(mov => mov * eurToUsd)
+  .reduce((acc, mov) => acc + mov, 0);
+
+console.log(totalDepositsUSD);
+
+//-------------CODING CHALLENGE 4-----------------------//
+/*
+Rewrite the 'calcAverageHumanAge' function from Challenge #2, but this time 
+as an arrow function, and using chaining!
+Test data:
+§ Data 1: [5, 2, 4, 1, 15, 8, 3]
+§ Data 2: [16, 6, 10, 5, 6, 1, 4]
+GOOD LUCK 
+*/
+const calculateAverageHumanAgeArrow = function (ages) {
+  console.log(ages);
+  //calculating the human age of dog
+  const averageAdultAge = ages
+    .map(age => (age <= 2 ? 2 * age : 16 + age * 4))
+    .filter(age => age >= 18)
+    .reduce((sum, age, _, arr) => sum + age / arr.length, 0);
+  console.log(averageAdultAge);
+};
+calculateAverageHumanAgeArrow([5, 2, 4, 1, 15, 8, 3]);
+calculateAverageHumanAgeArrow([16, 6, 10, 5, 6, 1, 4]);
+
+//----------------FIND () METHOD----------------//
+//retrieve first element that satisfies the condition while filter retrieves all in an array
+
+//finding the element that matches owner 'Jessica Davis'
+
+const account = accounts.find(acc => acc.owner === 'Jessica Davis');
+console.log(account);
