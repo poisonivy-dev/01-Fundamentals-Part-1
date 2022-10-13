@@ -217,6 +217,17 @@ btnLoan.addEventListener('click', function (e) {
   }
   inputLoanAmount.value = '';
 });
+
+//sorting the movements
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+  if (!sorted) {
+    const sortedList = acc.movements.slice().sort((a, b) => a - b);
+    displayMovements(sortedList);
+  } else displayMovements(acc.movements);
+  sorted = !sorted;
+});
 createUsername(accounts);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -512,33 +523,134 @@ createUsername(accounts);
 // //one level deep
 // //takes a callback , flattens and maps the array as well
 
-//----------------------DEFAULT SORT() METHOD----------------//
+// //----------------------DEFAULT SORT() METHOD----------------//
+// // Sorts Original array
+// //SORTS ARRAY IN ALPHABETICAL ORDER
+// console.log(
+//   accounts
+//     .map(acc => acc.owner)
+//     .flat()
+//     .sort()
+// );
+// //IN CASE OF NUMBERS , SORT CONVERTS THEM TO STRINGS AND COMPARES THE FIRST LETTER AND SORT THEM
+// console.log(
+//   accounts
+//     .map(acc => acc.movements)
+//     .flat()
+//     .sort()
+// );
 
-//SORTS ARRAY IN ALPHABETICAL ORDER
-console.log(
-  accounts
-    .map(acc => acc.owner)
-    .flat()
-    .sort()
-);
-//IN CASE OF NUMBERS , SORT CONVERTS THEM TO STRINGS AND COMPARES THE FIRST LETTER AND SORT THEM
-console.log(
-  accounts
-    .map(acc => acc.movements)
-    .flat()
-    .sort()
-);
+// //TO SORT NUMBERS WE'LL USE COMPARE CALLBACK
+// // return true from callback function if you want to swap
+// //:returns two consecutive numbers as a,b when return of callback<0 (keep order)
+// //:returns two consecutive numbers as b,a when return of callback>0 (switch order)
+// console.log(
+//   accounts
+//     .map(acc => acc.movements)
+//     .flat()
+//     .sort((a, b) => {
+//       //sort in ascending
+//       if (a > b) return 1;
+//       else return -1;
+//     })
+// );
+// //same as this:
+// // console.log(
+// //   accounts
+// //     .map(acc => acc.movements)
+// //     .flat()
+// //     .sort((a, b) => a-b)
+// // );
 
-//TO SORT NUMBERS WE'LL USE COMPARE CALLBACK
-// return true from callback function if you want to swap
-//:returns two consecutive numbers as a,b when return of callback<0
-//:returns two consecutive numbers as b,a when return of callback>0
-console.log(
-  accounts
-    .map(acc => acc.movements)
-    .flat()
-    .sort((a, b) => {
-      if (a > b) return 1;
-      else return -1;
-    })
-);
+// console.log(
+//   accounts
+//     .map(acc => acc.movements)
+//     .flat()
+//     .sort((a, b) => {
+//       //sort in descending
+//       if (a < b) return 1;
+//       else return -1;
+//     })
+// );
+
+// //-------------HOW TO CREATE ARRAY PROGRAMMATICALLY-------------------------//
+
+// const x = new Array(7);
+// console.log(x);
+// //cannot do this
+// // console.log(x.map(() => 5));
+
+// //-------------The Fill Method ----------------------//
+// // x.fill(val,startIndex,endIndex)
+// console.log(x.fill(5));
+// console.log(x.fill(3, 2, 4));
+
+// //------------------Array.from() Method---------------//
+// //It takes an object that will receive the length of array
+// //a mapping function that will be performed for each element
+// const z = Array.from({ length: 7 }, (_, i) => i + 1);
+// console.log(z);
+
+// //---generating 100 random number array---------------//
+// const randArray = Array.from({ length: 100 }, () =>
+//   Math.trunc(Math.random() * 100)
+// );
+// console.log(randArray);
+
+// // Example:
+// //----How to add sum of values if you don't have the array but values are hardcoded in UI
+
+// //getting the values from UI
+// let movementsUI = Array.from(
+//   document.querySelectorAll('.movements__value'),
+//   mov => mov.textContent
+// );
+// //extracting the numbers and removing whitespace
+// movementsUI = movementsUI.map(mov =>
+//   Number(mov.slice(0, -1).replace(/ /g, ''))
+// );
+// //adding together
+// console.log(movementsUI.reduce((acc, mov) => acc + mov));
+
+// //----------------EXERCISES--------------//
+
+// //FIND HOW MUCH TOTAL HAS BEEN DEPOSITED IN ALL ACCOUNTS
+
+// const grandDepositsTotal = accounts
+//   .map(acc => acc.movements)
+//   .flat()
+//   .filter(mov => mov > 0)
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(grandDepositsTotal);
+
+// //HOW MANY DEPOSITS HAVE BEEN THERE AT THE BANK WITH AT LEAST $1000
+// const bigDepositsTotal = accounts
+//   .flatMap(acc => acc.movements)
+//   .reduce((acc, curr) => (curr >= 1000 ? acc + 1 : acc), 0);
+// console.log(bigDepositsTotal);
+
+// //CREATE OBJECT THAT INCLUDES THE SUM OF DEPOSITS AND WITHDRAWALS
+// const accountsSummary = accounts
+//   .flatMap(acc => acc.movements)
+//   .reduce(
+//     (acc, curr) => {
+//       curr > 0 ? (acc.deposits += curr) : (acc.withdrawals += curr);
+//       return acc;
+//     },
+//     { deposits: 0, withdrawals: 0 }
+//   );
+// console.log(accountsSummary);
+// //CONVERTING A STRING TO TITLECASE
+// //this is a nice title -> This Is a Nice Title
+
+// const convertTitle = 'this is a Long TITLE but Not too long'
+//   .toLowerCase()
+//   .split(' ')
+//   .map(word => {
+//     const exceptions = ['a', 'an', 'or', 'the', 'but', 'on', 'in'];
+//     return !exceptions.includes(word)
+//       ? word[0].toUpperCase() + word.slice(1)
+//       : word;
+//   })
+//   .join(' ');
+// console.log(convertTitle);
