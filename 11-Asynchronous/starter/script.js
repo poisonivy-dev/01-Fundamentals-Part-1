@@ -39,8 +39,21 @@ const renderCountry = function (data, className = '') {
       }</p>
     </div>
   </article>`;
+
   countriesContainer.insertAdjacentHTML('beforeend', html);
-  countriesContainer.style.opacity = 1;
+};
+
+//RENDER ERROR
+const renderError = function (err) {
+  countriesContainer.innerHTML = '';
+  countriesContainer.insertAdjacentText(
+    'beforeend',
+    `Something went wrong ... ${err.message}`
+  );
+};
+const checkForNoData = function (response) {
+  if (!response.ok) throw new Error(`Country not found (${response.status})`);
+  return response.json();
 };
 
 //main request handler
@@ -101,10 +114,10 @@ const getCountryAndNeighbor = function (country) {
 
 //ES6 FEATURE
 
-//FETCH DOES THE SAME TASK AS MAKING A REQUEST
-const request = fetch('https://restcountries.com/v3.1/name/pakistan');
-// THE FETCH API RETURNS A PROMISE -- ALSO CALLED BUILDING A PROMISE
-console.log(request);
+// //FETCH DOES THE SAME TASK AS MAKING A REQUEST
+// const request = fetch('https://restcountries.com/v3.1/name/pakistan');
+// // THE FETCH API RETURNS A PROMISE -- ALSO CALLED BUILDING A PROMISE
+// console.log(request);
 
 /*
 A PROMISE IS AN OBJECT THAT IS USED AS A PLACEHOLDER FOR THE FUTURE RESULT OF AN ASYNCHRONOUS OPERATION
@@ -150,15 +163,105 @@ PROMISES ARE ONLY SETTLED ONCE
 const getCountryData = function (country) {
   //flat chain of promises
   fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then(response => response.json())
+    .then(response => checkForNoData(response))
     .then(data => {
+      countriesContainer.innerHTML = '';
       renderCountry(data[0]);
-      const neighbor = data[0].borders[0];
-      if (!neighbor) return;
+      const neighbor = data[0].borders?.[0];
+      if (!neighbor) throw new Error('Country not found');
 
       return fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`);
     })
-    .then(response => response.json())
-    .then(data => renderCountry(data[0], 'neighbour'));
+    .then(response => checkForNoData(response))
+    .then(data => renderCountry(data[0], 'neighbour'))
+    .catch(err => {
+      //promise is rejected when no internet is available
+      renderError(err);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
 };
-getCountryData('pakistan');
+
+btn.addEventListener('click', function () {
+  getCountryData('usa');
+});
+
+//-------------HANDLING REJECTED PROMISES---------//
+
+/*
+REJECTED PROMISES CAN BE HANDLED BY PASSING IN ANOTHER FUNCTION TO THE then() function
+
+we can add a catch() function at the end that acts as a global err handler
+
+finally() function runs no matter promise is fulfilled or rejected
+*/
+
+// WITH ERROR 404 -- FETCH PROMISE IS STILL FULFILLED AND CATCH BLOCK CANNOT PICK UP THIS KIND OF ERROR
+
+//---------------MANUALLY THROWING ERRORS-----------
+//PROMISE STAGE IS SET FULFILLED WHEN WE ENCOUNTER ERRORS LIKE 404
+//CATCH BLOCK IS NOT EXECUTED
+//WE HAVE TO MANUALLY THROW ERROR AND MAKE PROMISE SET TO REJECTED STAGE
+//ONLY THEN, CATCH() WILL GET EXECUTED
+//NOTE: Any error will cause error to reject, causing execution of catch()
+//SYNTAX: new throw Error(message);
+
+//-----------------------------CODING CHALLENGE 1---------------//
+/*
+In this challenge you will build a function 'whereAmI' which renders a country 
+only based on GPS coordinates. For that, you will use a second API to geocode 
+coordinates. So in this challenge, you’ll use an API on your own for the first time 
+Your tasks:
+PART 1
+1. Create a function 'whereAmI' which takes as inputs a latitude value ('lat') 
+and a longitude value ('lng') (these are GPS coordinates, examples are in test 
+data below).
+2. Do “reverse geocoding” of the provided coordinates. Reverse geocoding means 
+to convert coordinates to a meaningful location, like a city and country name. 
+Use this API to do reverse geocoding: https://geocode.xyz/api. The AJAX call 
+will be done to a URL with this format: 
+https://geocode.xyz/52.508,13.381?geoit=json. Use the fetch API and 
+promises to get the data. Do not use the 'getJSON' function we created, that 
+is cheating 
+3. Once you have the data, take a look at it in the console to see all the attributes 
+that you received about the provided location. Then, using this data, log a 
+message like this to the console: “You are in Berlin, Germany”
+4. Chain a .catch method to the end of the promise chain and log errors to the 
+console
+5. This API allows you to make only 3 requests per second. If you reload fast, you 
+will get this error with code 403. This is an error with the request. Remember, 
+fetch() does not reject the promise in this case. So create an error to reject 
+the promise yourself, with a meaningful error message
+PART 2
+6. Now it's time to use the received data to render a country. So take the relevant 
+attribute from the geocoding API result, and plug it into the countries API that 
+we have been using.
+7. Render the country and catch any errors, just like we have done in the last 
+lecture (you can even copy this code, no need to type the same code)
+Test data:
+§ Coordinates 1: 52.508, 13.381 (Latitude, Longitude)
+§ Coordinates 2: 19.037, 72.873
+§ Coordinates 3: -33.933, 18.474*/
+
+// const whereAmI = function (lat, lng) {
+//   const url = `https://geocode.xyz/${lat},${lng}?json=1`;
+//   fetch(url)
+//     .then(response => {
+//       if (!response.ok) throw new Error(`Bad Request ${response.status}`);
+//       return response.json();
+//     })
+//     .then(data => {
+//       console.log(`You are in ${data.state},${data.country}`);
+//       getCountryData(data.country);
+//     })
+//     .catch(err => {
+//       console.log(`${err.message}`);
+//     });
+// };
+
+// whereAmI(52.508, 13.381);
+// whereAmI(19.037, 72.873);
+// whereAmI(-33.933, 18.474);
+
+//===============BEHIND THE SCENES OF ASYNC FUNCTION---------//
