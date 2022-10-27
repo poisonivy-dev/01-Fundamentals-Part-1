@@ -265,3 +265,81 @@ Test data:
 // whereAmI(-33.933, 18.474);
 
 //===============BEHIND THE SCENES OF ASYNC FUNCTION---------//
+/*
+HOW CAN ASYNCHRONOUS CODE BE EXECUTED IN A NON-BLOCKING WAY, IF THERE IS ONLY ONE THREAD OF EXECUTION?
+
+THIS is because async tasks happen in the web api environment.The callback function is then queued to the callback stack.Event loop looks up in the call stack.if the stack is empty,it pushes the callback function there.
+
+NOTE: addEventListener only registers callback in the web API environment.
+*/
+
+//TWO QUEUES FOR HANDLING CALLBACKS
+//1. REGULAR CALLBACK QUEUE
+//2. MICROTASKS QUEUE
+
+//MICROTASKS QUEUE HAS PRIORITY OVER REGULAR CALLBACK QUEUE. SO, IF A PROMISE QUEUE HAS LARGE TASK TO BE COMPLETED, IT COULD STARVE THE OTHER CALLBACK QUEUE
+
+//SEE EXAMPLE BELOW
+
+//what would be the order of print
+// console.log('test start');
+// //normal callback queue
+// setTimeout(() => console.log('0 sec timer'), 0);
+//--promise that resolves immediately
+//microtasks callback has higher priority
+// Promise.resolve('Resolved promise 1').then(res => console.log(res));
+// Promise.resolve('Promise 2 resolved').then(res => {
+//   for (let i = 0; i < 10000000; i++) console.log(res);
+// });
+// console.log('task end');
+
+//================BUILDING SIMPLE PROMISE================//
+
+// new Promise()
+//takes an executor function which will then be called by promise constructor as soon as it runs
+
+//executor callback has 2 argument functions: resolve and fulfilled
+//it will be used to change the state of promise
+
+const lotteryPromise = new Promise(function (resolve, reject) {
+  console.log(`Lottery draw is happening 🔮`);
+  setTimeout(function () {
+    if (Math.random() >= 0.5) {
+      //marks promise as fulfilled
+      resolve('Congratulations 🎉, You won');
+    } else {
+      reject('You lost your money 💩');
+    }
+  }, 2000);
+});
+
+//CONSUME PROMISE
+lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+
+//promisifying setTimeout
+
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+//consuming promise
+wait(1)
+  .then(() => {
+    console.log('I waited 1 seconds');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('I waited 1 seconds');
+    return wait(1);
+  });
+
+//-------------CREATING FULFILLED PROMISE IMMEDIATELY--------//
+Promise.resolve('resolved value').then(val => {
+  console.log(val);
+});
+//-------------CREATING REJECTED PROMISE IMMEDIATELY--------//
+Promise.reject(new Error('Error')).then(val => {
+  console.error(val);
+});
