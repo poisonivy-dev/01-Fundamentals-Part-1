@@ -407,3 +407,35 @@ createImage('img\\img-1.jpg')
     return createImage('img\\img-3.jpg');
   })
   .catch(err => console.log(`${err} `));
+
+//-------------------ASYNC AWAIT-----------//
+
+//SYNTACTIC SUGAR OVER THE CONSUMING PROMISE FUNCTIONALITY
+//ES2017 FEATURE
+//ADD ASYNC KEYWORD TO MAKE FUNCTION ASYNCHRONOUS
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+const whereAmI = async function () {
+  const pos = await getPosition();
+  const { latitude, longitude } = pos.coords;
+  const resGeo = await fetch(
+    `https://geocode.xyz/${latitude},${longitude}?json=1`
+  );
+
+  const dataGeo = await resGeo.json();
+  //add an await keyword to pause execution in asynchronous function
+  const res = await fetch(
+    `https://restcountries.com/v3.1/name/${dataGeo.country}`
+  );
+  //add res.json
+  const data = await res.json();
+  console.log(data[0]);
+  renderCountry(data[0]);
+  countriesContainer.style.opacity = 1;
+};
+
+whereAmI();
