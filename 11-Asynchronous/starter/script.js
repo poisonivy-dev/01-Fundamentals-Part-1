@@ -314,9 +314,9 @@ const lotteryPromise = new Promise(function (resolve, reject) {
 });
 
 //CONSUME PROMISE
-lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+// lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
 
-//promisifying setTimeout
+//promisify setTimeout
 
 const wait = function (seconds) {
   return new Promise(function (resolve) {
@@ -325,21 +325,85 @@ const wait = function (seconds) {
 };
 
 //consuming promise
-wait(1)
-  .then(() => {
-    console.log('I waited 1 seconds');
-    return wait(1);
-  })
-  .then(() => {
-    console.log('I waited 1 seconds');
-    return wait(1);
-  });
+// wait(1)
+//   .then(() => {
+//     console.log('I waited 1 seconds');
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log('I waited 1 seconds');
+//     return wait(1);
+//   });
 
 //-------------CREATING FULFILLED PROMISE IMMEDIATELY--------//
-Promise.resolve('resolved value').then(val => {
-  console.log(val);
-});
+// Promise.resolve('resolved value').then(val => {
+//   console.log(val);
+// });
 //-------------CREATING REJECTED PROMISE IMMEDIATELY--------//
-Promise.reject(new Error('Error')).then(val => {
-  console.error(val);
-});
+// Promise.reject(new Error('Error')).then(val => {
+//   console.error(val);
+// });
+
+//-------------------------CHALLENGE 2------------------------//
+/*
+Your tasks:
+Tasks are not super-descriptive this time, so that you can figure out some stuff by 
+yourself. Pretend you're working on your own 
+PART 1
+1. Create a function 'createImage' which receives 'imgPath' as an input. 
+This function returns a promise which creates a new image (use 
+document.createElement('img')) and sets the .src attribute to the 
+provided image path
+2. When the image is done loading, append it to the DOM element with the 
+'images' class, and resolve the promise. The fulfilled value should be the 
+image element itself. In case there is an error loading the image (listen for 
+the'error' event), reject the promise
+3. If this part is too tricky for you, just watch the first part of the solution
+PART 2
+4. Consume the promise using .then and also add an error handler
+5. After the image has loaded, pause execution for 2 seconds using the 'wait'
+function we created earlier
+6. After the 2 seconds have passed, hide the current image (set display CSS 
+property to 'none'), and load a second image (Hint: Use the image element 
+returned by the 'createImage' promise to hide the current image. You will 
+need a global variable for that �)
+7. After the second image has loaded, pause execution for 2 seconds again
+8. After the 2 seconds have passed, hide the current image
+Test data: Images in the img folder. Test the error handler by passing a wrong 
+image path. Set the network speed to “Fast 3G” in the dev tools Network tab, 
+otherwise images load too fast
+*/
+const imageContainer = document.querySelector('.images');
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const image = document.createElement('img');
+    fetch(imgPath)
+      .then(res => {
+        if (!res.ok) reject(new Error(`Image not found(${res.status})`));
+        image.setAttribute('src', imgPath);
+        //adding element as node
+        imageContainer.append(image);
+        resolve(image);
+      })
+      .catch(() => reject(new Error('No Internet')));
+  });
+};
+let currImage;
+createImage('img\\img-1.jpg')
+  .then(res => {
+    currImage = res;
+    return wait(2);
+  })
+  .then(function () {
+    currImage.style.display = 'none';
+    return createImage('img\\img-2.jpg');
+  })
+  .then(res => {
+    currImage = res;
+    return wait(2);
+  })
+  .then(function () {
+    currImage.style.display = 'none';
+    return createImage('img\\img-3.jpg');
+  })
+  .catch(err => console.log(`${err} `));
