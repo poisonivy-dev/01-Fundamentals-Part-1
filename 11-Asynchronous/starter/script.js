@@ -301,17 +301,17 @@ NOTE: addEventListener only registers callback in the web API environment.
 //executor callback has 2 argument functions: resolve and fulfilled
 //it will be used to change the state of promise
 
-const lotteryPromise = new Promise(function (resolve, reject) {
-  console.log(`Lottery draw is happening 🔮`);
-  setTimeout(function () {
-    if (Math.random() >= 0.5) {
-      //marks promise as fulfilled
-      resolve('Congratulations 🎉, You won');
-    } else {
-      reject('You lost your money 💩');
-    }
-  }, 2000);
-});
+// const lotteryPromise = new Promise(function (resolve, reject) {
+//   console.log(`Lottery draw is happening 🔮`);
+//   setTimeout(function () {
+//     if (Math.random() >= 0.5) {
+//       //marks promise as fulfilled
+//       resolve('Congratulations 🎉, You won');
+//     } else {
+//       reject('You lost your money 💩');
+//     }
+//   }, 2000);
+// });
 
 //CONSUME PROMISE
 // lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
@@ -420,22 +420,90 @@ const getPosition = function () {
 };
 
 const whereAmI = async function () {
-  const pos = await getPosition();
-  const { latitude, longitude } = pos.coords;
-  const resGeo = await fetch(
-    `https://geocode.xyz/${latitude},${longitude}?json=1`
-  );
+  try {
+    const pos = await getPosition();
+    const { latitude, longitude } = pos.coords;
+    const resGeo = await fetch(
+      `https://geocode.xyz/${latitude},${longitude}?json=1`
+    );
+    if (!resGeo.ok) throw new Error('Problem getting location data');
 
-  const dataGeo = await resGeo.json();
-  //add an await keyword to pause execution in asynchronous function
-  const res = await fetch(
-    `https://restcountries.com/v3.1/name/${dataGeo.country}`
-  );
-  //add res.json
-  const data = await res.json();
-  console.log(data[0]);
-  renderCountry(data[0]);
-  countriesContainer.style.opacity = 1;
+    const dataGeo = await resGeo.json();
+    //add an await keyword to pause execution in asynchronous function
+    const res = await fetch(
+      `https://restcountries.com/v3.1/name/${dataGeo.country}`
+    );
+    if (!res.ok) throw new Error('Problem getting country');
+    //add res.json
+    const data = await res.json();
+    console.log(data[0]);
+    renderCountry(data[0]);
+    return `You are in ${dataGeo.country}, ${dataGeo.city}`;
+  } catch (err) {
+    console.log(err.message);
+    renderError(err);
+    //rejecting promise returned from async function
+    //rethrowing error to outer block
+    throw err;
+  } finally {
+    countriesContainer.style.opacity = 1;
+  }
 };
 
-whereAmI();
+//=---------------------RETURNING VALUES FROM ASYNC FUNCTION----------//
+
+//CANNOT CALL FUNCTION LIKE THIS -WOULD RETURN PROMISE
+// const city = whereAmI();
+// console.log(city);
+
+//THE RETURN VALUE WOULD BE THE FULFILLED VALUE OF PROMISE WHICH WE CAN ACCESS AS:
+// whereAmI()
+//   .then(city => console.log(city))
+//   .catch(err => console.log(err));
+
+(async function () {
+  try {
+    const city = await whereAmI();
+    console.log(city);
+  } catch (err) {
+    console.log(err.message);
+  }
+})();
+try {
+  let y = 1;
+  const x = 2;
+  x = 3;
+} catch (err) {
+  console.log(err.message);
+}
+const getJson = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+    return response.json();
+  });
+};
+const get3Countries = async function (c1, c2, c3) {
+  try {
+    //this will run the promise one after another
+    // const [data1] = await getJson(`https://restcountries.com/v3.1/name/${c1}`);
+    // const [data2] = await getJson(`https://restcountries.com/v3.1/name/${c2}`);
+    // const [data3] = await getJson(`https://restcountries.com/v3.1/name/${c3}`);
+
+    //Running promise in parallel
+    //Promise.all -- a helper function that takes all promises and runs in parallel
+
+    //one rejected promise will reject them all
+    const data = await Promise.all([
+      getJson(`https://restcountries.com/v3.1/name/${c1}`),
+      getJson(`https://restcountries.com/v3.1/name/${c3}`),
+      getJson(`https://restcountries.com/v3.1/name/${c3}`),
+    ]);
+
+    console.log(data.map(city => city[0].capital));
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+get3Countries('portugal', 'canada', 'tanzania');
